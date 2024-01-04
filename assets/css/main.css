@@ -1,3 +1,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter/inter-regular/Inter-Regular.eot.eot");
+  src: url("/fonts/inter/inter-regular/Inter-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    url("/fonts/inter/inter-regular/Inter-Regular.woff2") format("woff2"),
+    url("/fonts/inter/inter-regular/Inter-Regular.woff") format("woff"),
+    url("/fonts/inter/inter-regular/Inter-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter Bold";
+  src: url("/fonts/inter/inter-bold/Inter-Bold.eot");
+  src: url("/fonts/inter/inter-bold/Inter-Bold.eot?#iefix")
+      format("embedded-opentype"),
+    url("/fonts/inter/inter-bold/Inter-Bold.woff2") format("woff2"),
+    url("/fonts/inter/inter-bold/Inter-Bold.woff") format("woff"),
+    url("/fonts/inter/inter-bold/Inter-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter Medium";
+  src: url("/fonts/inter/inter-medium/Inter-Regular.eot");
+  src: url("/fonts/inter/inter-medium/Inter-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    url("/fonts/inter/inter-medium/Inter-Regular.woff2") format("woff2"),
+    url("/fonts/inter/inter-medium/Inter-Regular.woff") format("woff"),
+    url("/fonts/inter/inter-medium/Inter-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.inter-medium {
+  font-family: "Inter Medium" !important;
+}
+
+.inter-bold {
+  font-family: "Inter Bold" !important;
+}
+
+.inter {
+  font-family: "Inter" !important;
+}
+
+.bg-milk{
+  background-color:#fcfcfc;
+}
