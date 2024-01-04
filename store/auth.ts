@@ -24,11 +24,13 @@ export const useAuthStore = defineStore('signIn', () => {
                 })
             });
             userInfo.value = await response.json()
-
             if (userInfo.value) {
                 const token = useCookie('token');
                 token.value = userInfo.value?.token;
                 isAuthenticated.value = true
+
+                const userData = useCookie('userData');
+                userData.value = userInfo.value
             }
         }
 
@@ -41,6 +43,17 @@ export const useAuthStore = defineStore('signIn', () => {
         }
 
     }
+
+    const logUserOut = () => {
+        const token = useCookie('token');
+        isAuthenticated.value = false;
+        token.value = null
+
+
+        const userData = useCookie('userData');
+        userData.value = null
+    }
+
 
     // ! login with using nuxt useFetch
     // const loginUser = async ({ id, password }: userPayload) => {
@@ -60,13 +73,6 @@ export const useAuthStore = defineStore('signIn', () => {
     //     }
 
     // }
-
-
-    const logUserOut = () => {
-        const token = useCookie('token');
-        isAuthenticated.value = false;
-        token.value = null
-    }
 
     return {
         loginUser,
