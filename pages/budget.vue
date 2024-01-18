@@ -286,27 +286,34 @@ const budgetData = reactive({
 });
 
 const addCategory = () => {
-  if (newCategory.value !== "" && checkIsExist(newCategory.value)) {
+  if (newCategory.value !== "" && !checkIsExist(newCategory.value)) {
     addNewCategory(newCategory.value);
     newCategory.value = "";
     return;
-  } else if (checkIsExist(newCategory.value)) {
-    setModalSettings({
-      title: "Category Exist",
-      desc: "Entered category alreay exist please enter different one",
-      type: "error",
-      buttonText: "Confirm",
-    });
-  } else if (newCategory.value === "") {
+  }
+  
+  else if (newCategory.value === "") {
     setModalSettings({
       title: "Missing Required Area",
       desc: "Please enter a valid category name",
       type: "error",
       buttonText: "Confirm",
     });
+    openModal();
   }
 
-  openModal();
+  else if (checkIsExist(newCategory.value)) {
+    setModalSettings({
+      title: "Category Exist",
+      desc: "Entered category alreay exist please enter different one",
+      type: "error",
+      buttonText: "Confirm",
+    });
+    openModal();
+  } 
+
+
+
 };
 
 const addExp = () => {
