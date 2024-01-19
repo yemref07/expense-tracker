@@ -2,7 +2,7 @@
   <!-- Main modal -->
   <transition name="modal">
     <div
-      v-if="isVisible"
+    v-if="isVisible"
       class="modal flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
     >
       <div class="modal-container relative p-4 w-full max-w-2xl max-h-full">
@@ -13,13 +13,13 @@
             class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
           >
             <h3
-              class="text-xl font-semibold text-gray-900 dark:text-white ml-auto"
+              class="text-xl font-semibold text-gray-900 dark:text-white"
             >
               {{ title }}
             </h3>
             <button
               type="button"
-              @click="isVisible = false"
+              @click="closeModal()"
               class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
               data-modal-hide="default-modal"
             >
@@ -71,43 +71,51 @@
           <div
             class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600"
           >
+          
             <nuxt-link
+              v-if="link"
               :to="link"
               data-modal-hide="default-modal"
               type="button"
               class="mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >{{ button }}</nuxt-link
+              >{{ buttonLink }}</nuxt-link
+            >
+            <button
+              v-else
+              @click="closeModal()"
+              data-modal-hide="default-modal"
+              type="button"
+              class="mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >{{ button }}</button
             >
           </div>
         </div>
       </div>
     </div>
   </transition>
+  <div v-if="isVisible" class="modal-overlay"></div>
 
-  <div class="modal-overlay" v-if="isVisible"></div>
 </template>
 
 <script setup lang="ts">
-import { useExpenseStore } from "~/store/expense";
-const expenseStore = useExpenseStore();
-const { allExpenses } = storeToRefs(expenseStore);
-const isVisible = ref(false);
-
 const props = defineProps({
   title: String,
   desc: String,
   link: String,
+  buttonLink: String,
   button: String,
   type: String,
+  isVisible:Boolean
 });
 
-onMounted(() => {
-  if (allExpenses.value.length > 0) {
-    isVisible.value = false;
-  } else {
-    isVisible.value = true;
-  }
-});
+
+const emit = defineEmits(['close'])
+
+
+const closeModal = () =>{
+  emit('close')
+}
+
 </script>
 
 <style lang="css" scoped>
@@ -121,7 +129,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 99;
 }
 
 .modal {
