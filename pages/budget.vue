@@ -1,7 +1,7 @@
 <template>
   <container class="mt-10">
-    <div class="grid md:grid-cols-3 gap-10">
-      <div class="col-span-1">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div class="lg:col-span-1">
         <div class="mb-10 shadow-md p-10">
           <h2
             class="font-semibold mb-4 text-xl dark:text-white flex items-center"
@@ -17,21 +17,20 @@
 
           <input
             v-focus
+            v-model="budgetData.amount"
             type="number"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Set Your Budget"
-            required
+            required          
           />
 
           <input
-            min="2024-01"
-            max="2024-12"
+            v-model="budgetData.date"
             type="month"
             class="bg-gray-50 mt-5 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Budget Date"
             required
           />
-
           <btn-orange class="mt-5" @click="addBud()">Set Budget</btn-orange>
         </div>
 
@@ -120,7 +119,7 @@
         </div>
       </div>
 
-      <div class="col-span-2">
+      <div class="lg:col-span-2">
         <div class="">
           <h2 class="font-semibold mb-4 text-xl dark:text-white">
             Total Budgets of Each Month
@@ -150,7 +149,7 @@
                   >
                     {{ key }}
                   </th>
-                  <td class="px-6 py-4">{{ value }}</td>
+                  <td class="px-6 py-4">{{value.toLocaleString()}}</td>
                 </tr>
               </tbody>
             </table>
@@ -192,7 +191,7 @@
                   >
                     {{ item.category }}
                   </th>
-                  <td class="px-6 py-4">{{ item.amount }}</td>
+                  <td class="px-6 py-4">{{ item.amount }} $</td>
                   <td class="px-6 py-4">{{ item.date }}</td>
                 </tr>
               </tbody>
@@ -242,10 +241,10 @@ const budgetStore = useBudgetStore();
 
 const { categories } = storeToRefs(catStore);
 const { budgets } = storeToRefs(budgetStore);
-const { allExpenses } = storeToRefs(expenseStore);
+const { allExpenses,expensesByDate } = storeToRefs(expenseStore);
 
-const { addExpense, deleteExpense } = expenseStore;
-const { addBudget } = budgetStore;
+const { addExpense, deleteExpense ,setExpensesByDate,setExpensesByCat } = expenseStore;
+const { addBudget, checkBudgetExist } = budgetStore;
 const { addNewCategory, checkIsExist } = catStore;
 
 const newCategory = ref("");
@@ -276,7 +275,7 @@ const setModalSettings = ({ title, desc, buttonText, type }: modalSetting) => {
 const expenseData = reactive({
   category: "",
   amount: 0,
-  date: new Date(),
+  date: "",
   id: "",
 });
 
@@ -284,6 +283,10 @@ const budgetData = reactive({
   date: new Date(),
   amount: 0,
 });
+
+const formattedBudgetDate = computed(()=>{
+  return typeof(budgetData.date) === 'string' ?  new Date(budgetData.date + "-01" ) : budgetData.date
+})
 
 const addCategory = () => {
   if (newCategory.value !== "" && !checkIsExist(newCategory.value)) {
@@ -317,13 +320,31 @@ const addCategory = () => {
 };
 
 const addExp = () => {
-  if (expenseData.category !== "" && expenseData.amount !== 0)
+  if (expenseData.category !== "" && expenseData.amount !== 0 && expenseData.date !== "") {
+
     addExpense({
       category: expenseData.category,
       id: Math.floor(Math.random() * 100).toString(),
-      date: expenseData.date,
+      date: new Date(expenseData.date),
       amount: expenseData.amount,
     });
+
+    setExpensesByDate()
+    console.log(expensesByDate,'expensesByDate')
+    setExpensesByCat()
+
+    setModalSettings({
+      title:"Success",
+      desc:"You added new expense succesfully",
+      buttonText:"Confirm",
+      type:"success"
+    })
+    openModal()
+    expenseData.category = "",
+    expenseData.amount = 0,
+    expenseData.date = ""
+
+  }
   else {
     setModalSettings({
       title: "Missing Required Area",
@@ -336,12 +357,16 @@ const addExp = () => {
 };
 
 const addBud = () => {
-  if (budgetData.amount !== 0) {
+
+  if (budgetData.amount !== 0 && !checkBudgetExist(formattedBudgetDate.value)) {
+
     addBudget({
-      date: budgetData.date,
+      date: formattedBudgetDate.value,
       amount: budgetData.amount,
     });
-  } else {
+    budgetData.amount = 0
+  } 
+  else if(budgetData.amount === 0) {
     setModalSettings({
       title: "Missing Required Area",
       desc: "Please enter required areas before enter or set",
@@ -350,7 +375,20 @@ const addBud = () => {
     });
     openModal();
   }
+
+  else if(checkBudgetExist(formattedBudgetDate.value)){
+    setModalSettings({
+      title:"Alreadt Exist",
+      desc:"The budget for the selected month is already defined. Please choose a different month, or, if necessary, remove the related date budget and add it again.",
+      buttonText:"Confirm",
+      type:"error"
+    })
+    openModal()
+    budgetData.date = new Date();
+    budgetData.amount = 0;
+  }
 };
+
 
 //v-focus custom directive
 const vFocus = {
