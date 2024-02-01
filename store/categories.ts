@@ -1,5 +1,12 @@
 import { defineStore } from "pinia";
 
+interface expenseData {
+    id: string;
+    category: string,
+    amount: number,
+    date: Date,
+}
+
 
 export const useCatStore = defineStore('catStore',()=>{
     const categories = ref<string[]>([
@@ -15,18 +22,15 @@ export const useCatStore = defineStore('catStore',()=>{
         "entertaintment",
         "education",
         "loans",
-        "investment"
+        "investment",
     ])
 
-    const errorMsg = ref('')
-
     const addNewCategory = (catName:string) => {
-        if(!categories.value.includes(catName)){
-            categories.value.push(catName)
-        }
-        else{
-            errorMsg.value = "Its category already exist"
-        }
+       categories.value.push(catName)
+    }
+
+    const checkIsExist = (catName:string):boolean => {
+        return categories.value.includes(catName)
     }
 
     const removeCategory = (catName:string)=>{
@@ -39,12 +43,10 @@ export const useCatStore = defineStore('catStore',()=>{
         }
     }
 
-
-
-    return{
+    return{ 
         categories,
         addNewCategory,
         removeCategory,
-        errorMsg
+        checkIsExist,
     }
 })
