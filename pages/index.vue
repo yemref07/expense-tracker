@@ -1,5 +1,5 @@
 <template>
-  <div class="px-5 md:px-0 dark:bg-black">
+  <div class="px-5 md:px-0 dark:bg-gray-900">
     <div class="grid md:grid-cols-2">
       <div
         class="flex flex-col justify-evenly md:justify-around gap-5 flex-nowrap h-screen"
@@ -163,6 +163,10 @@
 import {useAuthStore} from '../store/auth'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
+definePageMeta({
+  layout: false
+})
+
 
 const router = useRouter()
 
